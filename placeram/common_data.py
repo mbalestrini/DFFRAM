@@ -126,30 +126,44 @@ class Decoder5x32(Placeable):
             raw_d3x8[decoder] = raw_d3x8.get(decoder) or []
             raw_d3x8[decoder].append(instance)
 
+        raw_tie = []
+        def process_tie(instance):
+            print("Process Tie")
+            raw_tie.append(instance)
+
         self.enbuf = None
         self.sieve(instances, [
             S(variable="decoder2x4", custom_behavior=process_d2x4_element),
-            S(variable="decoders3x8", groups=["decoder"], custom_behavior=process_d3x8_element)
+            S(variable="decoders3x8", groups=["decoder"], custom_behavior=process_d3x8_element),
+            S(variable="tie", custom_behavior=process_tie)
         ])
 
         # No point in calling dicts_to_lists if its all custom behavior anyway
 
         self.decoders3x8 = d2a({k: Decoder3x8(v) for k, v in raw_d3x8.items()})
         self.decoder2x4 = Decoder2x4(raw_d2x4)
+        self.tie = raw_tie[0]
 
     def place(self, row_list, start_row=0, decoder2x4_start_row=0, flip=False):
         current_row = start_row
 
+        print("self.tie: ", self.tie)
+
         if flip:
             current_row = self.decoder2x4.place(row_list, decoder2x4_start_row)
+            row_list[current_row].place(self.tie)            
             for idx in range(len(self.decoders3x8)):
                 self.decoders3x8[idx].place(row_list, idx*8)
             # Row.fill_rows(row_list, start_row, current_row)
+
 
         else:
             for idx in range(len(self.decoders3x8)):
                 self.decoders3x8[idx].place(row_list, idx*8)
 
             current_row = self.decoder2x4.place(row_list, decoder2x4_start_row)
+            row_list[current_row].place(self.tie)            
+            
+
             # Row.fill_rows(row_list, start_row, current_row)
         return start_row + 32 # 5x32 has 4 3x8 on top of each other and each is 8 rows

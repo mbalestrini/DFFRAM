@@ -67,12 +67,19 @@ module DEC5x32 (
     output  [31:0]  SEL
 );
 	wire [3:0]  EN;
+    
+    wire EN_HI;
+
 	DEC3x8 D0 ( .A(A[2:0]), .SEL(SEL[7:0]),   .EN(EN[0]) );
 	DEC3x8 D1 ( .A(A[2:0]), .SEL(SEL[15:8]),  .EN(EN[1]) );
 	DEC3x8 D2 ( .A(A[2:0]), .SEL(SEL[23:16]), .EN(EN[2]) );
 	DEC3x8 D3 ( .A(A[2:0]), .SEL(SEL[31:24]), .EN(EN[3]) );
 
-	DEC2x4 D ( .A(A[4:3]), .SEL(EN), .EN(1'b1) );
+	// sky130_fd_sc_hd__conb_1 TIE2 [3:0] (.LO(EN), .HI());
+    
+	sky130_fd_sc_hd__conb_1 TIE (.LO(), .HI(EN_HI));
+    
+	DEC2x4 D ( .A(A[4:3]), .SEL(EN), .EN(EN_HI) );
 endmodule
 
 module RFWORD #(parameter RWIDTH=32) 

@@ -1,3 +1,5 @@
+# ex: make tb_dffrf RCOUNT=32 RWIDTH=32
+
 PATTERN = tb_RAM32x32
 RCOUNT = 32
 RWIDTH = 32
@@ -12,6 +14,8 @@ DFFRF_TB=tb_DFFRF$(RCOUNT)x$(RWIDTH)
 .SUFFIXES:
 .PRECIOUS: %.v %.vvp
 all:  ${PATTERN:=.vcd}
+
+
 
 tb_dffrf:
 	$(eval RCOUNT=$(shell sh -c "echo "${PATTERN}" | grep -o -P '(?<=tb_DFFRF).*(?=x)'"))

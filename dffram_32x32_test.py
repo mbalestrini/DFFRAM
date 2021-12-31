@@ -359,14 +359,14 @@ def pdngen(width, height, in_file, out_file):
             met1 {{width 0.17 pitch 2.7 offset 0}}
         }}
         straps {{
-            met2 {{width 1.6 pitch 400 offset 100}}
-            met3 {{width 1.6 pitch 200 offset 35}}
+            met2 {{width 1.6 pitch 200 offset 100}}
+            met3 {{width 1.6 pitch 100 offset 25}}
         }}
         connect {{
             {{ met1 met2 }}
             {{ met2 met3 }}
         }}
-        pins {{ met3 }}
+        pins {{ met2 met3 }}
     }}
 
     set pdngen::voltage_domains {{ CORE {{ primary_power VPWR primary_ground VGND }} }}
@@ -420,7 +420,7 @@ def obs_route(metal_layer, wmargin, hmargin, width, height, in_file, out_file):
         "--lef", f"{build_folder}/merged.lef",
         "--input-def", in_file,
         "--obstructions",
-        f"met{metal_layer}  0 0 {2*wmargin+width} {2*hmargin+height}",
+        f"met{metal_layer} {wmargin} {hmargin} {wmargin+width} {hmargin+height}",
         "--output", out_file)
     last_def = out_file
 
